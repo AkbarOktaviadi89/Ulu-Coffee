@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\TransactionItemResource\Pages\ListTransactionItems;
+use Filament\Tables\Actions\Action;
 
 class TransactionResource extends Resource
 {
@@ -63,36 +65,50 @@ class TransactionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('code')
+                ->label('Kode Transaksi')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nama Kustomer')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label('Nomor Telepon')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('barcodes.image')
+                        ->label('Qr Code'),
+                Tables\Columns\TextColumn::make('payment_method')
+                            ->label('Metode Pembayaran')
+                            ->searchable(),
+                Tables\Columns\TextColumn::make('payment_status')
+                            ->label('Status Pembayaran')
+                            ->badge()
+                            ->colors([
+                                'success' => fn ($state): bool => in_array($state,['SUCCESS', 'PAID','SETTLED']),
+                                'warning' => fn ($state): bool => $state === 'PENDING',
+                                'danger' => fn ($state): bool => in_array($state,['FAILED','EXPIRED']),
+                            ]),
                 Tables\Columns\TextColumn::make('external_id')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('checkout_link')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('barcodes_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('payment_method')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('payment_status')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make(' subtotal')
+                    ->label('Subtotal')
                     ->numeric()
-                    ->sortable(),
+                    ->money('IDR'),
                 Tables\Columns\TextColumn::make('ppn')
+                    ->label('PPN')
                     ->numeric()
-                    ->sortable(),
+                    ->money('IDR'),
                 Tables\Columns\TextColumn::make('total')
+                    ->label('Total')
                     ->numeric()
-                    ->sortable(),
+                    ->money('IDR'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Tanggal Transaksi')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Tanggal Update')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -102,11 +118,16 @@ class TransactionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Action::make('See transaction')
+                ->color('success')
+                ->url(
+                    fn (Transaction $record): string => static::getUrl('transactions-items.index', [
+                        'parent' => $record->id,
+                    ])
+                )
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+        
             ]);
     }
 
@@ -123,6 +144,7 @@ class TransactionResource extends Resource
             'index' => Pages\ListTransactions::route('/'),
             'create' => Pages\CreateTransaction::route('/create'),
             'edit' => Pages\EditTransaction::route('/{record}/edit'),
+            'transaction-items.index' => ListTransactionItems::route('/{parent}/transaction-items'),
         ];
     }
 }

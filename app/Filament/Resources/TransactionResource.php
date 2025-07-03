@@ -144,7 +144,7 @@ class TransactionResource extends Resource
             'index' => Pages\ListTransactions::route('/'),
             'create' => Pages\CreateTransaction::route('/create'),
             'edit' => Pages\EditTransaction::route('/{record}/edit'),
-            'transaction-items.index' => ListTransactionItems::route('/{parent}/transaction-items'),
+            'transaction-items.index' => \App\Filament\Resources\TransactionItemsResource\Pages\ListTransactionItems::route('/{parent}/transaction-items'),
         ];
     }
 }

@@ -10,14 +10,26 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+// use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class TransactionItemsResource extends Resource
 {
     protected static ?string $model = TransactionItems::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function shouldRegisterNavigation() : bool {
+        return false;
+    }
+    public static string $parentResource = TransactionResource::class;
+
+    // public function getRecordTitle(?Model $record): string|null|Htmlable
+    // {
+    //     return $record->title; 
+    // }
 
     public static function form(Form $form): Form
     {
@@ -46,29 +58,32 @@ class TransactionItemsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('transaction_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('foods_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('quantity')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->money()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('subtotal')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('transaction_id')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('food.name')
+                ->label('Nama Makanan')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('quantity')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('price')
+                    ->money('IDR')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('subtotal')
+                    ->money('IDR')
+                    ->numeric()
+                    ->sortable(),
             ])
             ->filters([
                 //
@@ -77,9 +92,6 @@ class TransactionItemsResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 
@@ -94,8 +106,6 @@ class TransactionItemsResource extends Resource
     {
         return [
             'index' => Pages\ListTransactionItems::route('/'),
-            'create' => Pages\CreateTransactionItems::route('/create'),
-            'edit' => Pages\EditTransactionItems::route('/{record}/edit'),
         ];
     }
 }

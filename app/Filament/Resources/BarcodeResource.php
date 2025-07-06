@@ -61,8 +61,8 @@ class BarcodeResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('download')
-                ->lael('Download QR Code')
-                ->icon('heroicon-o-download')
+                ->label('Download QR Code')
+                ->icon('heroicon-m-arrow-down-tray') // Versi Heroicons v2 (modern)
                 ->action(function ($record){
                     $filePath = storage_path('app/public/' . $record->image);
                     if(file_exists($filePath)){

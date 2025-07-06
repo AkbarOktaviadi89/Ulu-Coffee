@@ -10,7 +10,7 @@ use App\Models\Barcode;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use SimpleSoftwareI0\QrCode\Facades\QrCode;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class CreateQr extends Page
 {
@@ -31,7 +31,7 @@ class CreateQr extends Page
                 Forms\Components\TextInput::make('table_number')
                     ->required()
                     ->default(fn() => $this->table_number)
-                    ->disable(),
+                    ->disabled(),
             ]);
     }
 

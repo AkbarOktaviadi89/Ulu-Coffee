@@ -14,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Support\Htmlable;
 
 class TransactionItemsResource extends Resource
 {
@@ -26,10 +27,10 @@ class TransactionItemsResource extends Resource
     }
     public static string $parentResource = TransactionResource::class;
 
-    // public function getRecordTitle(?Model $record): string|null|Htmlable
-    // {
-    //     return $record->title; 
-    // }
+    public static function getRecordTitle(?Model $record): string|null|Htmlable
+    {
+        return false; 
+    }
 
     public static function form(Form $form): Form
     {

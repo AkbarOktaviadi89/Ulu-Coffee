@@ -1,0 +1,37 @@
+<!-- Membuat sebuah div dengan menggunakan x-data untuk mengelola state "open" dengan nilai awal false menggunakan alpineJS-->
+<div x-data="{ open: false }">
+    <!-- Komponen Livewire untuk menampilkan judul halaman dan navigasi, dengan atribut "title" yang di-set menjadi 'Favorite Food' -->
+    <!-- "wire:key" digunakan untuk memberikan identifikasi unik -->
+    <livewire:components.page-title-nav
+        :title="'Today\'s Promo'"
+        wire:key="{{ str()->random(50) }}"
+    ></livewire:components.page-title-nav>
+
+    <div class="container mb-24 grid grid-cols-2 items-center gap-4">
+        @if (isset($filteredProducts) && count($filteredProducts) > 0)
+            @foreach ($filteredProducts as $promo)
+                <!-- :data mengirimkan data produk makanan ke dalam komponen, dan :categories mengirimkan kategori produk -->
+                <!-- wire:key memberikan identifikasi unik untuk setiap item dalam loop -->
+                <livewire:components.food-card
+                    wire:key="{{ str()->random(50) }}"
+                    :data="$promo"
+                    :categories="$categories"
+                />
+            @endforeach
+        @else
+            <div class="col-span-2 my-2 w-full">
+                <p class="text-center text-black-70">No promo available</p>
+            </div>
+        @endif
+    </div>
+
+    <div x-show="open">
+        <!-- Komponen Livewire "filter-modal" yang menerima selectedCategories dan categories sebagai properti, akan menampilkan modal yang berisi filter kategori makanan -->
+        <!-- "wire:key" digunakan untuk memberikan identifikasi unik -->
+        <livewire:components.filter-modal
+            :selectedCategories="$selectedCategories"
+            :categories="$categories"
+            wire:key="{{ str()->random(50) }}"
+        />
+    </div>
+</div>
